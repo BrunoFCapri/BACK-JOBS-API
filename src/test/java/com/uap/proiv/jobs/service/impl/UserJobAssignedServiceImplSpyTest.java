@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.any;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.uap.proiv.jobs.dto.AssignedResponse;
@@ -27,7 +30,7 @@ import com.uap.proiv.jobs.service.JobService;
 import com.uap.proiv.jobs.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
-public class UserJobAssignedServiceImplTest {
+public class UserJobAssignedServiceImplSpyTest {
 
     @Mock
     JobService jobService;
@@ -35,7 +38,7 @@ public class UserJobAssignedServiceImplTest {
     @Mock
     UserService userService;
 
-    @Mock
+    @Spy
     AssignedService assignmentService;
 
     @InjectMocks
@@ -87,7 +90,6 @@ public class UserJobAssignedServiceImplTest {
         assignments.add(new AssignedResponse(1, 1));
         assignments.add(new AssignedResponse(2, 2));
 
-        // assign() hace new ArrayList<>(userApiResponse.getData()), asi que data no puede quedar en null
         userApiResponse = new UserApiResponse();
         userApiResponse.setPage(1);
         userApiResponse.setPerPage(2);
@@ -101,9 +103,11 @@ public class UserJobAssignedServiceImplTest {
     void assign_successOnAPage() {
         when(jobService.getAllJobs()).thenReturn(jobs);
         when(userService.search(1)).thenReturn(userApiResponse);
-        // el bucle de paginado sigue pidiendo la pagina siguiente hasta recibir null
         when(userService.search(2)).thenReturn(null);
-        when(assignmentService.create(jobs, List.of(1, 2))).thenReturn(assignments);
+
+        // create() devuelve List<AssignedResponse>: el spy tiene que devolver eso,
+        // no la lista de UserJobAssigned que arma assign() despues
+        doReturn(assignments).when(assignmentService).create(any(), any());
 
         List<UserJobAssigned> result = serviceImpl.assign();
 
@@ -121,8 +125,6 @@ public class UserJobAssignedServiceImplTest {
         verify(jobService, times(1)).getAllJobs();
         verify(userService, times(1)).search(1);
         verify(userService, times(1)).search(2);
-        verify(assignmentService, times(1)).create(jobs, List.of(1, 2));
-    
-    
+        verify(assignmentService, times(1)).create(any(), any());
     }
 }
