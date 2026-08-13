@@ -3,6 +3,7 @@ package com.uap.proiv.jobs.client;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uap.proiv.jobs.dto.Job;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ public class JobApiRepository {
     private final ObjectMapper objectMapper;
     private final List<Job> jobs;
 
+    @Autowired
     public JobApiRepository(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.jobs = createJobs();

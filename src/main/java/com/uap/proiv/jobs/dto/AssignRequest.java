@@ -1,5 +1,6 @@
 package com.uap.proiv.jobs.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,6 +10,7 @@ public class AssignRequest {
     @NotEmpty
     private String clientName;
 
+    @JsonProperty("requestNumber")
     public Integer getRequestNumber() {
         return requestNumber;
     }
@@ -17,6 +19,7 @@ public class AssignRequest {
         this.requestNumber = requestNumber;
     }
 
+    @JsonProperty("clientName")
     public String getClientName() {
         return clientName;
     }

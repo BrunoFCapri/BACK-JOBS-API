@@ -16,14 +16,23 @@ public class UserApiRepository {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    private final String baseUrl = "https://reqres.in/api/users";
-    private final String apiKey = "free_user_3HYTiqu2JKQ4TfGq884xW5mqfrd";
+    private final String baseUrl;
+    private final String apiKey;
 
     public UserApiRepository() {
-        this.httpClient = HttpClient.newBuilder()
+        this(HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
-                .build();
-        this.objectMapper = new ObjectMapper();
+                .build(),
+                new ObjectMapper(),
+                "https://reqres.in/api/users",
+                "free_user_3HYTiqu2JKQ4TfGq884xW5mqfrd");
+    }
+
+    public UserApiRepository(HttpClient httpClient, ObjectMapper objectMapper, String baseUrl, String apiKey) {
+        this.httpClient = httpClient;
+        this.objectMapper = objectMapper;
+        this.baseUrl = baseUrl;
+        this.apiKey = apiKey;
     }
 
     public UserApiResponse getUsers(int page) {

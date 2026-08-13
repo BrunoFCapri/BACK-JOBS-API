@@ -28,9 +28,11 @@ public class UserJobAssignedServiceImpl implements UserJobAssignedService {
         UserApiResponse userApiResponse = userService.search(1);
         List<User> users = new ArrayList<>(userApiResponse.getData());
         int totalPages = userApiResponse.getTotalPages();
-        while (totalPages <= userApiResponse.getPage()){
+        while (userApiResponse != null && userApiResponse.getPage() <= totalPages){
             userApiResponse = userService.search(userApiResponse.getPage() + 1);
-            users.addAll(userApiResponse.getData());
+            if (userApiResponse != null && userApiResponse.getData() != null) {
+                users.addAll(userApiResponse.getData());
+            }
         }
         List<AssignedResponse> assigned = assignedService.create(jobs, users.stream().map(User::getId).toList());
 
