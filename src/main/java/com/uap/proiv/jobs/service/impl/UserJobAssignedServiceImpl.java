@@ -34,8 +34,10 @@ public class UserJobAssignedServiceImpl implements UserJobAssignedService {
                 users.addAll(userApiResponse.getData());
             }
         }
-        List<AssignedResponse> assigned = assignedService.create(jobs, users.stream().map(User::getId).toList());
-
+        List<AssignedResponse> assigned = assignedService.create(jobs, users.stream()
+    .filter(u -> u != null)
+    .map(user -> user.getId())
+    .toList());
         return jobs.stream().map(job -> {
            List<User> usersJob = assigned.stream().filter(a -> a.jobId() == job.getId())
                    .map(assignedResponse ->

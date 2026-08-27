@@ -85,7 +85,7 @@ public class UserApiRepository {
         }
     }
 
-    public void updateUser(User user) {
+    public User updateUser(User user) {
         try {
             Map<String, String> userMap = new HashMap<>();
             userMap.put("name", user.getFirstName()); //success value only "morpheus"
@@ -105,7 +105,9 @@ public class UserApiRepository {
                     HttpResponse.BodyHandlers.ofString()
             );
 
-            if (response.statusCode() != 200) {
+            if (response.statusCode() == 200) {
+                return objectMapper.readValue(response.body(), User.class);
+            } else {
                 throw new RuntimeException("Error en ReqRes API. Código: " + response.statusCode());
             }
         } catch (Exception e) {

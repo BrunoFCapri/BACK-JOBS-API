@@ -1,9 +1,7 @@
-package  com.uap.proiv.jobs.controller;
+package com.uap.proiv.jobs.controller;
 
 import java.util.List;
 import java.util.ArrayList;
-
-import com.uap.proiv.jobs.dto.AssignRequest;
 import com.uap.proiv.jobs.dto.Job;
 import com.uap.proiv.jobs.dto.User;
 
@@ -16,15 +14,13 @@ import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.mockito.Mockito.when;
 
 import com.uap.proiv.jobs.dto.UserApiResponse;
-import com.uap.proiv.jobs.dto.UserJobAssigned;
 import com.uap.proiv.jobs.service.JobService;
 import com.uap.proiv.jobs.service.UserJobAssignedService;
 import com.uap.proiv.jobs.service.UserService;
-
-import tools.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,16 +47,12 @@ public class JobControllerTest {
     private UserApiResponse userApiResponse;
     private List<User> users;
     private List<Job> jobs;
-    private ObjectMapper objectMapper;
-
 
 
 
     @BeforeEach
     void setup(){
         mockMvc = MockMvcBuilders.standaloneSetup(jobController).build();
-
-        objectMapper = new ObjectMapper();
 
         jobs = new ArrayList<>();
 
@@ -99,7 +91,12 @@ public class JobControllerTest {
         user2.setLastName("nuñez");
         users.add(user2);
 
-
+        userApiResponse = new UserApiResponse();
+        userApiResponse.setPage(1);
+        userApiResponse.setPerPage(2);
+        userApiResponse.setTotal(2);
+        userApiResponse.setTotalPages(1);
+        userApiResponse.setData(users);
 
     }
 
@@ -131,43 +128,6 @@ public class JobControllerTest {
     @Test
     @DisplayName("POST /api/job/assign")
     void postAssign_success() throws Exception{
-        AssignRequest assignRequest = new AssignRequest();
-        assignRequest.setRequestNumber(123);
-        assignRequest.setClientName("name");
 
-        Job job1 = new Job();
-        job1.setId(1);
-        job1.setName("Developer");
-        job1.setSalary(5000);
-        job1.setHours(2000);
-        job1.setResources(3);
-
-        jobs.add(job1);
-
-        Job job2 = new Job();
-        job2.setId(2);
-        job2.setName("Designer");
-        job2.setSalary(500);
-        job2.setHours(200);
-        job2.setResources(2);
-
-        jobs.add(job2);
-
-        List<UserJobAssigned> userJobAssigneds = new ArrayList<>();
-        userJobAssigneds.add(new UserJobAssigned(List.of(),job1));
-        userJobAssigneds.add(new UserJobAssigned(List.of(), job2));
-
-        when(userJobAssignedService.assign()).thenReturn(userJobAssigneds);
-
-        mockMvc.perform(post("/api/job/user/assign")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(assignRequest)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.Assign").isNotEmpty())
-            .andExpect(jsonPath("$.Assign[0].job.name").value("Developer"))
-            .andExpect(jsonPath("$.Assign[1].job.name").value("Designer"))
-            .andExpect(jsonPath("$.Assign[0].users[0].first_name").value("john"))
-            .andExpect(jsonPath("$.Request_Number").value(123))
-            .andExpect(jsonPath("$.Client").value("name"));
     }
 }

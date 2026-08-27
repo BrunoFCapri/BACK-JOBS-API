@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 import com.uap.proiv.jobs.client.JobApiRepository;
 import com.uap.proiv.jobs.dto.Job;
-import com.uap.proiv.jobs.service.impl.JobServiceImpl;
 
 
 @ExtendWith(MockitoExtension.class)

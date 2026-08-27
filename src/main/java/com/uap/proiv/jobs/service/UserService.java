@@ -6,5 +6,5 @@ import com.uap.proiv.jobs.dto.UserApiResponse;
 public interface UserService {
     UserApiResponse search(int page);
     User searchById(int id);
-    void update(User user);
+    User update(User user);
 }

@@ -28,9 +28,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(User user) {
+    public User update(User user) {
         try {
-            userApiRepository.updateUser( user);
+            return userApiRepository.updateUser(user);
         } catch (Exception e) {
             throw new RuntimeException("Error al crear el usuario: " + e.getMessage(), e);
         }
